@@ -14,21 +14,20 @@ Node.js 22 trở lên:
 
 ```bash
 npm ci
-npm run build
 npm run dev
 ```
 
-Mở http://localhost:8787. Sau khi sửa public/, chạy lại npm run build.
+Mở http://localhost:8787. Worker phục vụ trực tiếp các file trong `public/`.
 
 ## Deploy từ GitHub
 
 1. Cloudflare → Workers & Pages → Create → Import a repository (hoặc Connect Git).
 2. Kết nối GitHub, chọn siamsion0282/testFlow, nhánh main.
 3. Tên Worker: testflow-photo-studio, trùng name trong wrangler.jsonc.
-4. Root: gốc repo. Build command: `npm run build`. Deploy command: `npx wrangler deploy`.
+4. Root: gốc repo. Build command: để trống (nếu Cloudflare yêu cầu, dùng `npm run build`). Deploy command: `npx wrangler deploy`.
 5. Deploy. Cloudflare cấp URL workers.dev và tự deploy mỗi lần push lên main.
 
-Workers Builds cài dependencies từ package-lock.json; nếu có install command, dùng npm ci. Chọn Workers vì cấu hình có Worker và Static Assets. dist/ được tạo khi build, không commit.
+Workers Builds cài dependencies từ package-lock.json; nếu có install command, dùng `npm ci`. Chọn Workers vì cấu hình có Worker và Static Assets. Static Assets trỏ thẳng tới `public/`, nên lệnh deploy chạy được dù không có bước build.
 
 ## Deploy CLI
 
@@ -42,6 +41,6 @@ CI không tương tác dùng secret CLOUDFLARE_API_TOKEN và CLOUDFLARE_ACCOUNT_
 
 ## Kiểm tra
 
-`npm run check`: kiểm tra cú pháp, unit tests, build, đóng gói thử Worker mà không deploy.
+`npm run check`: kiểm tra cú pháp, unit tests và đóng gói thử Worker mà không deploy.
 
-public/ chứa giao diện/Canvas; src/worker.js phục vụ assets và security headers; scripts/build.mjs tạo dist/; tests/ kiểm tra lõi chỉnh sửa/Worker.
+`public/` chứa giao diện/Canvas; `src/worker.js` phục vụ assets và security headers; `tests/` kiểm tra lõi chỉnh sửa/Worker. `npm run build` chỉ tạo bản sao `dist/` để dùng khi cần, không ảnh hưởng tới triển khai Workers.
