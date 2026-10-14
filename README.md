@@ -1,50 +1,47 @@
-# Project Title
+# Photo Studio · TestFlow
 
-Một dòng mô tả ngắn gọn về dự án này là gì và nó giải quyết vấn đề gì.
+Web chỉnh sửa ảnh tiếng Việt trên Cloudflare Workers. Ảnh xử lý trong trình duyệt, không upload lên máy chủ.
 
 ## Tính năng
 
-- Tính năng 1
-- Tính năng 2
-- Tính năng 3
+Mở/kéo thả JPG, PNG, WebP (20 MB, 24 megapixel); xoay, lật, cắt giữa theo tỉ lệ; chỉnh sáng, tương phản, bão hòa; bộ lọc; so sánh/khôi phục ảnh gốc; ảnh mẫu; xuất PNG/JPG/WebP. Giao diện responsive, không watermark.
 
-## Cài đặt
+Cắt áp dụng các chỉnh sửa hiện tại vào ảnh. Khôi phục trả về ảnh ban đầu. Cần trình duyệt hỗ trợ Canvas 2D filter (Chrome/Edge/Firefox hoặc Safari mới).
 
-```bash
-# Clone repository
-git clone https://github.com/username/repo.git
-cd repo
+## Chạy local
 
-# Cài đặt dependencies
-npm install
-```
-
-## Sử dụng
+Node.js 22 trở lên:
 
 ```bash
+npm ci
+npm run build
 npm run dev
 ```
 
-Mở trình duyệt tại `http://localhost:3000`.
+Mở http://localhost:8787. Sau khi sửa public/, chạy lại npm run build.
 
-## Cấu trúc dự án
+## Deploy từ GitHub
 
+1. Cloudflare → Workers & Pages → Create → Import a repository (hoặc Connect Git).
+2. Kết nối GitHub, chọn siamsion0282/testFlow, nhánh main.
+3. Tên Worker: testflow-photo-studio, trùng name trong wrangler.jsonc.
+4. Root: gốc repo. Build command: `npm run build`. Deploy command: `npx wrangler deploy`.
+5. Deploy. Cloudflare cấp URL workers.dev và tự deploy mỗi lần push lên main.
+
+Workers Builds cài dependencies từ package-lock.json; nếu có install command, dùng npm ci. Chọn Workers vì cấu hình có Worker và Static Assets. dist/ được tạo khi build, không commit.
+
+## Deploy CLI
+
+```bash
+npm ci
+npx wrangler login
+npm run deploy
 ```
-.
-├── src/          # Mã nguồn chính
-├── tests/        # Test cases
-├── docs/         # Tài liệu
-└── README.md
-```
 
-## Đóng góp
+CI không tương tác dùng secret CLOUDFLARE_API_TOKEN và CLOUDFLARE_ACCOUNT_ID. Không commit token. Workers Builds quản lý xác thực khi kết nối repo trong Cloudflare.
 
-1. Fork repository
-2. Tạo nhánh tính năng (`git checkout -b feature/amazing-feature`)
-3. Commit thay đổi (`git commit -m 'Add some amazing feature'`)
-4. Push lên nhánh (`git push origin feature/amazing-feature`)
-5. Mở Pull Request
+## Kiểm tra
 
-## Giấy phép
+`npm run check`: kiểm tra cú pháp, unit tests, build, đóng gói thử Worker mà không deploy.
 
-Phân phối theo giấy phép MIT. Xem thêm tại [LICENSE](LICENSE).
+public/ chứa giao diện/Canvas; src/worker.js phục vụ assets và security headers; scripts/build.mjs tạo dist/; tests/ kiểm tra lõi chỉnh sửa/Worker.

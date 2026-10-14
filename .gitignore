@@ -116,3 +116,7 @@ vibeflow.json
 .turbo/
 *.tsbuildinfo
 
+
+.wrangler/
+.dev.vars
+.dev.vars.*
